@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRTZ — Corteiz</title>
+  <link rel="stylesheet" href="design-system.css">
+  <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font-body);
+      background: var(--color-black);
+      color: var(--color-yellow);
+      cursor: none;
+    }
+
+    /* ─── Cursor ─── */
+    .cursor {
+      position: fixed;
+      width: 7px;
+      height: 7px;
+      background: var(--color-white);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 999999;
+      transform: translate(-50%, -50%);
+    }
+
+    /* ─── Splash ─── */
+    .splash {
+      position: fixed;
+      inset: 0;
+      z-index: var(--z-modal);
+      background: var(--color-black);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      cursor: none;
+    }
+
+    .splash-logo-wrap {
+      perspective: 900px;
+    }
+
+    .splash-logo-spin {
+      animation: spin3d 12s linear infinite;
+    }
+
+    @keyframes spin3d {
+      from { transform: rotateY(0deg)   rotateX(6deg); }
+      to   { transform: rotateY(360deg) rotateX(6deg); }
+    }
+
+    .splash-logo-img {
+      width: clamp(210px, 37vw, 390px);
+      height: auto;
+      display: block;
+      /* Scale up inside clip so the oval ring is cropped out */
+      transform: scale(1.18);
+      clip-path: ellipse(42% 44% at 50% 50%);
+      animation: splashGlow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes splashGlow {
+      from { filter: drop-shadow(0 0 30px rgba(255,213,0,0.25)); }
+      to   { filter: drop-shadow(0 0 70px rgba(255,213,0,0.6)); }
+    }
+
+    .splash-enter {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: rgba(255,213,0,0.5);
+      border: 1px solid rgba(255,213,0,0.15);
+      padding: 12px 32px;
+      animation: enterBlink 2s ease-in-out infinite;
+      cursor: none;
+    }
+
+    .splash-enter:hover {
+      color: var(--color-yellow);
+      border-color: rgba(255,213,0,0.5);
+    }
+
+    @keyframes enterBlink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    @keyframes splashOut {
+      to { opacity: 0; pointer-events: none; }
+    }
+
+    .splash.out {
+      animation: splashOut 0.5s ease forwards;
+    }
+
+    /* ─── App shell ─── */
+    .shell {
+      display: grid;
+      grid-template-columns: 162px 1fr;
+      height: 100vh;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .shell.visible { opacity: 1; }
+
+    /* ─── Sidebar ─── */
+    .sidebar {
+      background: var(--color-black);
+      border-right: 1px solid rgba(255,255,255,0.05);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-brand {
+      padding: 18px 14px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      flex-shrink: 0;
+    }
+
+    .sidebar-brand img {
+      height: 44px;
+      width: auto;
+      display: block;
+      opacity: 0.9;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 0;
+      scrollbar-width: none;
+    }
+
+    .sidebar-nav::-webkit-scrollbar { display: none; }
+
+    .sidebar-nav ul { list-style: none; }
+
+    .sidebar-nav a {
+      display: block;
+      padding: 6px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,213,0,0.45);
+      text-decoration: none;
+      transition: color 0.12s, background 0.12s;
+      cursor: none;
+      white-space: nowrap;
+    }
+
+    .sidebar-nav a:hover { color: rgba(255,213,0,0.85); }
+    .sidebar-nav a.active { color: var(--color-yellow); }
+
+    .sidebar-foot {
+      flex-shrink: 0;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding: 14px 14px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .sidebar-foot-icon {
+      margin-bottom: 10px;
+      display: block;
+      cursor: none;
+    }
+
+    .sidebar-foot-icon img {
+      height: 22px;
+      width: auto;
+      opacity: 0.35;
+      transition: opacity 0.12s;
+    }
+
+    .sidebar-foot-icon:hover img { opacity: 0.7; }
+
+    .sidebar-foot a {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,213,0,0.3);
+      text-decoration: none;
+      padding: 3px 0;
+      transition: color 0.12s;
+      cursor: none;
+    }
+
+    .sidebar-foot a:hover { color: rgba(255,213,0,0.75); }
+
+    /* ─── Main ─── */
+    .main {
+      height: 100vh;
+      overflow-y: auto;
+      padding: 18px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.08) transparent;
+    }
+
+    .main::-webkit-scrollbar { width: 4px; }
+    .main::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+
+    /* ─── Product grid ─── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    /* ─── Product card ─── */
+    .card {
+      cursor: none;
+    }
+
+    .card-img {
+      aspect-ratio: 1 / 1;
+      background: var(--color-black);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card-img img {
+      width: 85%;
+      height: 85%;
+      object-fit: contain;
+      display: block;
+      margin: auto;
+      transition: transform 0.4s ease;
+      image-rendering: auto;
+    }
+
+    .card:hover .card-img img { transform: scale(1.04); }
+
+    /* Sale badge */
+    .card-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      background: var(--color-yellow);
+      color: var(--color-black);
+    }
+
+    .card-badge--sold { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); }
+
+    .card-info {
+      padding: 8px 0 18px;
+    }
+
+    .card-name {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255,213,0,0.85);
+      margin-bottom: 3px;
+      line-height: 1.35;
+    }
+
+    .card-price {
+      font-size: 11px;
+      font-weight: 400;
+      color: rgba(255,213,0,0.4);
+      letter-spacing: 0.02em;
+    }
+
+    .card-price--sale {
+      color: var(--color-yellow);
+    }
+
+    /* ─── Mobile ─── */
+    @media (max-width: 749px) {
+      .shell {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+        height: 100vh;
+      }
+
+      .sidebar {
+        height: auto;
+        flex-direction: row;
+        overflow-x: auto;
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+      }
+
+      .sidebar-brand { border-bottom: none; border-right: 1px solid rgba(255,255,255,0.05); padding: 12px; }
+      .sidebar-nav { display: flex; flex-direction: row; padding: 0; overflow-x: auto; white-space: nowrap; }
+      .sidebar-nav ul { display: flex; flex-direction: row; }
+      .sidebar-nav a { padding: 14px 12px; }
+      .sidebar-foot { display: none; }
+
+      .main { padding: 10px; }
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 2px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cursor -->
+  <div class="cursor" id="cursor"></div>
+
+  <!-- Splash -->
+  <div class="splash" id="splash" onclick="enter()">
+    <div class="splash-logo-wrap">
+      <div class="splash-logo-spin">
+        <img class="splash-logo-img" src="crtzlogo.png" alt="CRTZ">
+      </div>
+    </div>
+    <div class="splash-enter">&#9670;&nbsp; Click to Enter &nbsp;&#9670;</div>
+  </div>
+
+  <!-- Shell -->
+  <div class="shell" id="shell">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+      <div class="sidebar-brand">
+        <img src="crtzlogo.png" alt="CRTZ">
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul>
+          <li><a href="#" class="active" data-cat="all">All</a></li>
+          <li><a href="#" data-cat="classic">Classic</a></li>
+          <li><a href="#" data-cat="cords">Cords</a></li>
+          <li><a href="#" data-cat="t-shirts">T-Shirts</a></li>
+          <li><a href="#" data-cat="tops">Tops / Jackets</a></li>
+          <li><a href="#" data-cat="sweatshirts">Sweatshirts</a></li>
+          <li><a href="#" data-cat="jackets">Jackets</a></li>
+          <li><a href="#" data-cat="shirts">Shirts</a></li>
+          <li><a href="#" data-cat="bottoms">Bottoms</a></li>
+          <li><a href="#" data-cat="shorts">Shorts</a></li>
+          <li><a href="#" data-cat="hats">Hats</a></li>
+          <li><a href="#" data-cat="bags">Bags</a></li>
+          <li><a href="#" data-cat="accessories">Accessories</a></li>
+          <li><a href="#" data-cat="womens">Womens</a></li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-foot">
+        <a href="#" class="sidebar-foot-icon">
+          <img src="crtzlogo.png" alt="CRTZ">
+        </a>
+        <a href="#">Archive</a>
+        <a href="#">Newsletter</a>
+        <a href="#">Shipping Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+
+    </aside>
+
+    <!-- Main product area -->
+    <main class="main">
+      <div class="grid" id="grid">
+
+        <!-- Island Puff Print -->
+        <div class="card"><div class="card-img"><img src="images/island-puff-zip-hoodie-black.png" alt="Island Puff Print Zip Hoodie Black"></div><div class="card-info"><p class="card-name">Island Puff Print Zip Hoodie [Black]</p><p class="card-price">£119.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/island-puff-zip-hoodie-grey.png" alt="Island Puff Print Zip Hoodie Heather Grey"></div><div class="card-info"><p class="card-name">Island Puff Print Zip Hoodie [Heather Grey]</p><p class="card-price">£119.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/island-puff-sweatpant-black.png" alt="Island Puff Print Open Hem Sweatpant Black"></div><div class="card-info"><p class="card-name">Island Puff Print Open Hem Sweatpant [Black]</p><p class="card-price">£95.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/island-puff-sweatpant-grey.png" alt="Island Puff Print Open Hem Sweatpant Heather Grey"></div><div class="card-info"><p class="card-name">Island Puff Print Open Hem Sweatpant [Heather Grey]</p><p class="card-price">£95.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/island-sweatshort-black.png" alt="Island Puff Print Sweatshort Black"></div><div class="card-info"><p class="card-name">Island Puff Print Sweatshort [Black]</p><p class="card-price">£65.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/island-sweatshort-grey.png" alt="Island Puff Print Sweatshort Heather Grey"></div><div class="card-info"><p class="card-name">Island Puff Print Sweatshort [Heather Grey]</p><p class="card-price">£65.00</p></div></div>
+
+        <!-- Mini Island -->
+        <div class="card"><div class="card-img"><img src="images/mini-island-zip-black.png" alt="Mini Island Zip Hoodie Black"></div><div class="card-info"><p class="card-name">Mini Island Zip Hoodie [Black]</p><p class="card-price">£119.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/mini-island-zip-grey.png" alt="Mini Island Zip Hoodie Heather Grey"></div><div class="card-info"><p class="card-name">Mini Island Zip Hoodie [Heather Grey]</p><p class="card-price">£119.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/mini-island-sweatpant-black.png" alt="Mini Island Sweatpant Black"></div><div class="card-info"><p class="card-name">Mini Island Sweatpant [Black]</p><p class="card-price">£85.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/mini-island-sweatpant-grey.png" alt="Mini Island Sweatpant Heather Grey"></div><div class="card-info"><p class="card-name">Mini Island Sweatpant [Heather Grey]</p><p class="card-price">£85.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/mini-island-crewneck-black.png" alt="Mini Island Crewneck Black"></div><div class="card-info"><p class="card-name">Mini Island Crewneck [Black]</p><p class="card-price">£95.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/mini-island-crewneck-grey.png" alt="Mini Island Crewneck Heather Grey"></div><div class="card-info"><p class="card-name">Mini Island Crewneck [Heather Grey]</p><p class="card-price">£95.00</p></div></div>
+
+        <!-- HMP -->
+        <div class="card"><div class="card-img"><img src="images/hmp-thermal-zip-black.png" alt="HMP Thermal Zip Hoodie Black"></div><div class="card-info"><p class="card-name">HMP Thermal Zip Hoodie [Black]</p><p class="card-price">£119.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/hmp-thermal-zip-grey.png" alt="HMP Thermal Zip Hoodie Heather Grey"></div><div class="card-info"><p class="card-name">HMP Thermal Zip Hoodie [Heather Grey]</p><p class="card-price">£119.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/hmp-v2-sweatshirt-black.png" alt="HMP V2 Sweatshirt Black"></div><div class="card-info"><p class="card-name">HMP V2 Sweatshirt [Black]</p><p class="card-price">£95.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/hmp-v2-sweatshirt-grey.png" alt="HMP V2 Sweatshirt Heather Grey"></div><div class="card-info"><p class="card-name">HMP V2 Sweatshirt [Heather Grey]</p><p class="card-price">£95.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/hmp-sweatpant-black.png" alt="HMP Open Hem Sweatpant Black"></div><div class="card-info"><p class="card-name">HMP Open Hem Sweatpant [Black]</p><p class="card-price">£85.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/hmp-sweatpant-grey.png" alt="HMP Open Hem Sweatpant Heather Grey"></div><div class="card-info"><p class="card-name">HMP Open Hem Sweatpant [Heather Grey]</p><p class="card-price">£85.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/hmp-v2-sweatpant-black.png" alt="HMP V2 Sweatpant Black"></div><div class="card-info"><p class="card-name">HMP V2 Sweatpant [Black]</p><p class="card-price">£85.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/hmp-v2-sweatpant-grey.png" alt="HMP V2 Sweatpant Heather Grey"></div><div class="card-info"><p class="card-name">HMP V2 Sweatpant [Heather Grey]</p><p class="card-price">£85.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/hmp-tank-black.png" alt="HMP Essentials Tank Top Black"></div><div class="card-info"><p class="card-name">HMP Essentials Tank Top [3pk] [Black]</p><p class="card-price">£35.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/hmp-tank-white.png" alt="HMP Essentials Tank Top White"></div><div class="card-info"><p class="card-name">HMP Essentials Tank Top [3pk] [White]</p><p class="card-price">£35.00</p></div></div>
+
+        <!-- Alcatraz -->
+        <div class="card"><div class="card-img"><img src="images/alcatraz-hoodie-black.png" alt="Alcatraz Hoodie Triple Black"></div><div class="card-info"><p class="card-name">Alcatraz Hoodie [Triple Black]</p><p class="card-price">£145.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/alcatraz-hoodie-bw.png" alt="Alcatraz Hoodie Black White"></div><div class="card-info"><p class="card-name">Alcatraz Hoodie [Black &amp; White]</p><p class="card-price">£145.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/alcatraz-sweatpant-black.png" alt="Alcatraz Sweatpant Triple Black"></div><div class="card-info"><p class="card-name">Alcatraz Sweatpant [Triple Black]</p><p class="card-price">£110.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/alcatraz-cargo-black.png" alt="Alcatraz Cargo Pant Black"></div><div class="card-info"><p class="card-name">Alcatraz Cargo Pant [Black]</p><p class="card-price">£119.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/bolo-down-jacket-black.png" alt="Bolo Down Jacket Triple Black"></div><div class="card-info"><p class="card-name">Bolo Down Jacket [Triple Black]</p><p class="card-price">£195.00</p></div></div>
+
+        <!-- Guerillaz -->
+        <div class="card"><div class="card-img"><img src="images/guerillaz-cargo-pant-black.png" alt="Guerillaz Cargo Pant Black"></div><div class="card-info"><p class="card-name">Guerillaz Cargo Pant [Black]</p><p class="card-price">£110.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/guerillaz-cargo-short-black.png" alt="Guerillaz Cargo Short Black"></div><div class="card-info"><p class="card-name">Guerillaz Cargo Short [Black]</p><p class="card-price">£75.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/guerillaz-thermal-tee-black.png" alt="Guerillaz Thermal LS Tee Black"></div><div class="card-info"><p class="card-name">Guerillaz Thermal LS Tee [Black]</p><p class="card-price">£65.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/guerillaz-thermal-tee-cream.png" alt="Guerillaz Thermal LS Tee Cream"></div><div class="card-info"><p class="card-name">Guerillaz Thermal LS Tee [Cream]</p><p class="card-price">£65.00</p></div></div>
+
+        <!-- Island Thermal -->
+        <div class="card"><div class="card-img"><img src="images/island-thermal-black.png" alt="Island Waffle Thermal Black"></div><div class="card-info"><p class="card-name">Island Waffle Thermal [Black]</p><p class="card-price">£75.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/island-thermal-cream.png" alt="Island Waffle Thermal Cream"></div><div class="card-info"><p class="card-name">Island Waffle Thermal [Cream]</p><p class="card-price">£75.00</p></div></div>
+
+        <!-- Royale -->
+        <div class="card"><div class="card-img"><img src="images/royale-ls-black.png" alt="Royale Heavyweight Tee LS Black"></div><div class="card-info"><p class="card-name">Royale Heavyweight Tee LS [Black]</p><p class="card-price">£65.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/royale-ls-grey.png" alt="Royale Heavyweight Tee LS Heather Grey"></div><div class="card-info"><p class="card-name">Royale Heavyweight Tee LS [Heather Grey]</p><p class="card-price">£65.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/royale-heavyweight-black.png" alt="Royale Heavyweight Tee Black"></div><div class="card-info"><p class="card-name">Royale Heavyweight Tee [Black]</p><p class="card-price">£55.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/royale-heavyweight-grey.png" alt="Royale Heavyweight Tee White"></div><div class="card-info"><p class="card-name">Royale Heavyweight Tee [White]</p><p class="card-price">£55.00</p></div></div>
+
+        <!-- OG Island -->
+        <div class="card"><div class="card-img"><img src="images/og-island-ls-black.png" alt="OG Island LS Tee Black"></div><div class="card-info"><p class="card-name">OG Island LS Tee [Black]</p><p class="card-price">£65.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/og-island-ls-white.png" alt="OG Island LS Tee White"></div><div class="card-info"><p class="card-name">OG Island LS Tee [White]</p><p class="card-price">£65.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/og-island-ls-grey.png" alt="OG Island LS Tee Heather Grey"></div><div class="card-info"><p class="card-name">OG Island LS Tee [Heather Grey]</p><p class="card-price">£65.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/og-island-tee-black.png" alt="OG Island Tee Black"></div><div class="card-info"><p class="card-name">OG Island Tee [Black]</p><p class="card-price">£55.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/og-island-tee-white.png" alt="OG Island Tee White"></div><div class="card-info"><p class="card-name">OG Island Tee [White]</p><p class="card-price">£55.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/og-island-tee-grey.png" alt="OG Island Tee Heather Grey"></div><div class="card-info"><p class="card-name">OG Island Tee [Heather Grey]</p><p class="card-price">£55.00</p></div></div>
+
+        <!-- Reminder Tee -->
+        <div class="card"><div class="card-img"><img src="images/reminder-tee-black.png" alt="Reminder Tee Black"></div><div class="card-info"><p class="card-name">Reminder Tee [Black]</p><p class="card-price">£55.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/reminder-tee-white.png" alt="Reminder Tee White"></div><div class="card-info"><p class="card-name">Reminder Tee [White]</p><p class="card-price">£55.00</p></div></div>
+
+        <!-- Womens -->
+        <div class="card"><div class="card-img"><img src="images/wmns-alcatraz-top-bw.jpg" alt="Wmns Alcatraz Baby Top Black White"></div><div class="card-info"><p class="card-name">Wmns Alcatraz Baby Top [Black &amp; White]</p><p class="card-price">£65.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/wmns-alcatraz-top-wb.jpg" alt="Wmns Alcatraz Baby Top White Black"></div><div class="card-info"><p class="card-name">Wmns Alcatraz Baby Top [White &amp; Black]</p><p class="card-price">£65.00</p></div></div>
+
+        <!-- Hats -->
+        <div class="card"><div class="card-img"><img src="images/island-trucker-hat-black.png" alt="Island Puff Print Trucker Hat Black"></div><div class="card-info"><p class="card-name">Island Puff Print Trucker Hat [Black]</p><p class="card-price">£35.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/liteworky-cap-black.png" alt="Liteworky Cap Black"></div><div class="card-info"><p class="card-name">Liteworky Cap [Black]</p><p class="card-price">£35.00</p></div></div>
+
+        <!-- Bags -->
+        <div class="card"><div class="card-img"><img src="images/island-duffle-black.png" alt="Island Duffle Bag Black"></div><div class="card-info"><p class="card-name">Island Duffle Bag [Black]</p><p class="card-price">£85.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/island-card-holder-black.png" alt="Island Leather Card Holder Black"></div><div class="card-info"><p class="card-name">Island Leather Card Holder [Black]</p><p class="card-price">£45.00</p></div></div>
+
+        <!-- Boxers -->
+        <div class="card"><div class="card-img"><img src="images/boxers-alcatraz-black.png" alt="Black Alcatraz Boxers 3 Pack"></div><div class="card-info"><p class="card-name">Black Alcatraz Boxers [3 Pack]</p><p class="card-price">£35.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/boxers-alcatraz-white.png" alt="White Alcatraz Boxers 3 Pack"></div><div class="card-info"><p class="card-name">White Alcatraz Boxers [3 Pack]</p><p class="card-price">£35.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/boxers-alcatraz-grey.png" alt="Grey Alcatraz Boxers 3 Pack"></div><div class="card-info"><p class="card-name">Grey Alcatraz Boxers [3 Pack]</p><p class="card-price">£35.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/boxers-allstarz-black.png" alt="Black Allstarz Boxers 3 Pack"></div><div class="card-info"><p class="card-name">Black Allstarz Boxers [3 Pack]</p><p class="card-price">£35.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/boxers-allstarz-white.png" alt="White Allstarz Boxers 3 Pack"></div><div class="card-info"><p class="card-name">White Allstarz Boxers [3 Pack]</p><p class="card-price">£35.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/boxers-allstarz-grey.png" alt="Grey Allstarz Boxers 3 Pack"></div><div class="card-info"><p class="card-name">Grey Allstarz Boxers [3 Pack]</p><p class="card-price">£35.00</p></div></div>
+
+        <!-- Socks -->
+        <div class="card"><div class="card-img"><img src="images/socks-black.png" alt="Black Alcatraz Socks 2 Pack"></div><div class="card-info"><p class="card-name">Black Alcatraz Socks [2 Pack]</p><p class="card-price">£18.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/socks-white.png" alt="White Alcatraz Socks 2 Pack"></div><div class="card-info"><p class="card-name">White Alcatraz Socks [2 Pack]</p><p class="card-price">£18.00</p></div></div>
+
+        <!-- Footwear -->
+        <div class="card"><div class="card-img"><img src="images/crib-crep-black.png" alt="Crib Crep Black"></div><div class="card-info"><p class="card-name">Crib Crep [Black]</p><p class="card-price">£120.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/crib-crep-white.png" alt="Crib Crep White"></div><div class="card-info"><p class="card-name">Crib Crep [White]</p><p class="card-price">£120.00</p></div></div>
+
+        <!-- Gloves -->
+        <div class="card"><div class="card-img"><img src="images/leather-gloves-black.png" alt="Leather Gloves Black"></div><div class="card-info"><p class="card-name">Leather Gloves [Black]</p><p class="card-price">£65.00</p></div></div>
+        <div class="card"><div class="card-img"><img src="images/leather-gloves-white.png" alt="Leather Gloves White"></div><div class="card-info"><p class="card-name">Leather Gloves [White]</p><p class="card-price">£65.00</p></div></div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script>
+    /* Cursor */
+    const cur = document.getElementById('cursor');
+    document.addEventListener('mousemove', e => {
+      cur.style.left = e.clientX + 'px';
+      cur.style.top  = e.clientY + 'px';
+    });
+
+    /* Splash */
+    function enter() {
+      const splash = document.getElementById('splash');
+      const shell  = document.getElementById('shell');
+      splash.classList.add('out');
+      setTimeout(() => {
+        splash.style.display = 'none';
+        shell.classList.add('visible');
+      }, 500);
+    }
+
+    /* Category filter */
+    document.querySelectorAll('.sidebar-nav a').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        document.querySelectorAll('.sidebar-nav a').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>
