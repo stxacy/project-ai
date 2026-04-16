@@ -1186,8 +1186,9 @@
 
     /* ─── Mobile ──────────────────────────────────────────────── */
     @media (max-width: 768px) {
-      /* Nav fully opaque on mobile — no bleed-through */
+      /* Nav scrolls with page on mobile */
       .nav {
+        position: relative;
         padding: 1.2rem 1.5rem;
         background: var(--bg);
         backdrop-filter: none;
