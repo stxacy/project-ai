@@ -1,59 +1,64 @@
 [submodule "217"]
 	path = 217
-	url = https://github.com/stxacy/217-boston-road.git
+	url = git@github.com:stxacy/217-boston-road.git
 	branch = master
 
 [submodule "brown-betty"]
 	path = brown-betty
-	url = https://github.com/stxacy/brown-betty.git
+	url = git@github.com:stxacy/brown-betty.git
 	branch = main
 
 [submodule "crs-automotive"]
 	path = crs-automotive
-	url = https://github.com/stxacy/crs-automotive.git
+	url = git@github.com:stxacy/crs-automotive.git
 	branch = main
 
 [submodule "crtz"]
 	path = crtz
-	url = https://github.com/stxacy/crtz.git
+	url = git@github.com:stxacy/crtz.git
 	branch = main
 
 [submodule "deforestation"]
 	path = deforestation
-	url = https://github.com/stxacy/roots-and-ruin.git
+	url = git@github.com:stxacy/roots-and-ruin.git
 	branch = master
 
 [submodule "f1-racing"]
 	path = f1-racing
-	url = https://github.com/stxacy/crest-racing.git
+	url = git@github.com:stxacy/crest-racing.git
 	branch = main
 
 [submodule "greyspace-uk"]
 	path = greyspace-uk
-	url = https://github.com/stxacy/greyspace-uk.git
+	url = git@github.com:stxacy/greyspace-uk.git
 	branch = master
 
 [submodule "kingscote-haulage"]
 	path = kingscote-haulage
-	url = https://github.com/stxacy/kingscote-haulage.git
+	url = git@github.com:stxacy/kingscote-haulage.git
 	branch = main
 
 [submodule "portfolio"]
 	path = portfolio
-	url = https://github.com/stxacy/stxacy.github.io.git
+	url = git@github.com:stxacy/stxacy.github.io.git
 	branch = main
 
 [submodule "subspace-birmingham"]
 	path = subspace-birmingham
-	url = https://github.com/stxacy/subspace-birmingham
+	url = git@github.com:stxacy/subspace-birmingham.git
 	branch = main
 
 [submodule "surf-coast-suns"]
 	path = surf-coast-suns
-	url = https://github.com/stxacy/SCCC.git
+	url = git@github.com:stxacy/SCCC.git
 	branch = main
 
 [submodule "team-dashboard"]
 	path = team-dashboard
-	url = https://github.com/stxacy/spec-ops-hq.git
+	url = git@github.com:stxacy/spec-ops-hq.git
+	branch = main
+
+[submodule "interior-design"]
+	path = interior-design
+	url = git@github.com:stxacy/volm-studio.git
 	branch = main
