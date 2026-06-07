@@ -23,7 +23,12 @@ Whenever the user asks to "learn a skill", "save a skill", or "add this as a ski
 | `f1-racing/` | CREST Racing — fictional Formula 1 team website |
 | `interior-design/` | Volm Studio — interior architecture studio website |
 | `subspace-birmingham/` | SUBSPACE — Birmingham underground drum and bass label and events collective |
-| `greyspace/` | Greyspace — project TBC (folder created, awaiting brief) |
+| `greyspace-uk/` | Greyspace UK — project TBC |
+| `217/` | 217 Boston Road — architectural/property project |
+| `brown-betty/` | Brown Betty — cafe/restaurant website |
+| `crs-automotive/` | CRS Automotive — automotive parts company website |
+| `crtz/` | CRTZ — streetwear/fashion brand website |
+| `kingscote-haulage/` | Kingscote Haulage — haulage company website |
 
 ## Shared Skills Library
 
