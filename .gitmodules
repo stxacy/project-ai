@@ -53,11 +53,6 @@
 	url = git@github.com:stxacy/SCCC.git
 	branch = main
 
-[submodule "team-dashboard"]
-	path = team-dashboard
-	url = git@github.com:stxacy/spec-ops-hq.git
-	branch = main
-
 [submodule "interior-design"]
 	path = interior-design
 	url = git@github.com:stxacy/volm-studio.git
