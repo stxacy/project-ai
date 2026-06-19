@@ -57,3 +57,6 @@
 	path = interior-design
 	url = git@github.com:stxacy/volm-studio.git
 	branch = main
+[submodule "psr-london"]
+	path = psr-london
+	url = git@github.com:stxacy/psr-london.git
