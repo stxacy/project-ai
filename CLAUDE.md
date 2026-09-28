@@ -19,8 +19,7 @@ Whenever the user asks to "learn a skill", "save a skill", or "add this as a ski
 | `surf-coast-suns/` | Surf Coast Cricket Club website |
 | `portfolio/` | Personal STXACY portfolio |
 | `team-dashboard/` | Spec Ops internal team dashboard |
-| `deforestation/` | Roots & Ruin — environmental awareness / deforestation campaign site |
-| `f1-racing/` | CREST Racing — fictional Formula 1 team website |
+| `crest-racing/` | CREST Racing — fictional Formula 1 team website |
 | `interior-design/` | Volm Studio — interior architecture studio website |
 | `subspace-birmingham/` | SUBSPACE — Birmingham underground drum and bass label and events collective |
 | `greyspace-uk/` | Greyspace UK — project TBC |
@@ -29,6 +28,9 @@ Whenever the user asks to "learn a skill", "save a skill", or "add this as a ski
 | `crs-automotive/` | CRS Automotive — automotive parts company website |
 | `crtz/` | CRTZ — streetwear/fashion brand website |
 | `kingscote-haulage/` | Kingscote Haulage — haulage company website |
+| `fireballhd420xdlmao/` | fireballhd420xdlmao — joke/meme landing page with animated fireball |
+| `immersive-studio/` | Immersive Studio — internal drag-and-drop editor for building exportable immersive web effects (scroll storytelling, WebGL, micro-interactions) |
+| `stxacy-render-engine/` | STXACY Render Engine — reusable Blender → AI pipeline producing branded cinematic 3D stills; config-per-client, Greyspace UK is the first client |
 
 ## Shared Skills Library
 

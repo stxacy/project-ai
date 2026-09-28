@@ -18,16 +18,6 @@
 	url = git@github.com:stxacy/crtz.git
 	branch = main
 
-[submodule "deforestation"]
-	path = deforestation
-	url = git@github.com:stxacy/roots-and-ruin.git
-	branch = master
-
-[submodule "f1-racing"]
-	path = f1-racing
-	url = git@github.com:stxacy/crest-racing.git
-	branch = main
-
 [submodule "greyspace-uk"]
 	path = greyspace-uk
 	url = git@github.com:stxacy/greyspace-uk.git
@@ -60,3 +50,7 @@
 [submodule "psr-london"]
 	path = psr-london
 	url = git@github.com:stxacy/psr-london.git
+[submodule "crest-racing"]
+	path = crest-racing
+	url = git@github.com:stxacy/crest-racing.git
+	branch = main
